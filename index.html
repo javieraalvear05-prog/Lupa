@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>leia. | Horario Global</title>
+    <title>leia. | Gestión de Horarios</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -26,7 +26,7 @@
         .week-grid {
             display: grid;
             grid-template-columns: 80px repeat(7, 1fr);
-            min-width: 1000px; /* Asegura que en móvil se pueda hacer scroll horizontal en modo semana */
+            min-width: 1000px;
         }
 
         .day-grid {
@@ -50,7 +50,7 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade { animation: fadeIn 0.3s ease-out forwards; }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body class="p-4 lg:p-10 min-h-screen">
@@ -59,121 +59,161 @@
         <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
             <div class="text-center md:text-left">
-                <h1 class="text-6xl lg:text-7xl font-[900] tracking-tighter text-violet-600 italic leading-none">
-                    leia<span class="text-violet-200">.</span>
+                <h1 class="text-6xl lg:text-8xl font-[900] tracking-tighter text-violet-600 italic leading-none">
+                    Leia<span class="text-violet-200">.</span>
                 </h1>
                 <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-violet-400 mt-2">Instrumentación Óptica de Precisión</p>
             </div>
 
             <div class="flex flex-col items-end gap-3">
-                <div class="bg-white/80 p-3 px-6 rounded-3xl shadow-sm border border-violet-100 flex items-center gap-4">
+                <div class="bg-white/80 p-3 px-6 rounded-[2rem] shadow-sm border border-violet-100 flex items-center gap-4">
                     <div class="text-right">
                         <div class="text-[8px] font-black text-violet-300 uppercase tracking-widest">Hora Actual</div>
-                        <div id="clock" class="text-xl font-mono font-bold text-violet-600 leading-none">00:00:00</div>
+                        <div id="clock" class="text-2xl font-mono font-bold text-violet-600 leading-none mt-1">--:--:--</div>
                     </div>
-                    <div class="w-10 h-10 rounded-2xl bg-violet-600 flex items-center justify-center text-white shadow-lg shadow-violet-200">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div class="w-12 h-12 rounded-2xl bg-violet-600 flex items-center justify-center text-white shadow-lg shadow-violet-200">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- View Selector & Day Selector -->
-        <div class="flex flex-col lg:flex-row gap-4 mb-6 items-center justify-between">
-            <div class="flex p-1.5 bg-violet-100/50 rounded-2xl w-fit">
-                <button id="btn-day-view" onclick="setView('day')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all active-tab">Vista Día</button>
-                <button id="btn-week-view" onclick="setView('week')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all text-violet-400">Vista Semana</button>
+        <div class="flex flex-col lg:flex-row gap-6 mb-8 items-center justify-between">
+            <div class="flex p-1.5 bg-violet-100/50 rounded-2xl w-fit border border-violet-100/50">
+                <button id="btn-day-view" onclick="setView('day')" class="px-8 py-2.5 rounded-xl text-xs font-bold transition-all active-tab">Vista Día</button>
+                <button id="btn-week-view" onclick="setView('week')" class="px-8 py-2.5 rounded-xl text-xs font-bold transition-all text-violet-400">Vista Semana</button>
             </div>
 
-            <nav id="day-selector" class="flex gap-2 overflow-x-auto no-scrollbar max-w-full pb-2 lg:pb-0">
-                <!-- Se genera dinámicamente -->
+            <nav id="day-selector" class="flex gap-2 overflow-x-auto no-scrollbar max-w-full pb-2 lg:pb-0 transition-opacity duration-300">
+                <!-- Generado por JS -->
             </nav>
         </div>
 
         <!-- Main Schedule Container -->
-        <div class="bg-white/80 rounded-[2.5rem] shadow-2xl border border-violet-50 overflow-hidden flex flex-col glass animate-fade">
-            
+        <div class="bg-white/90 rounded-[3rem] shadow-2xl border border-violet-50 overflow-hidden flex flex-col glass animate-fade">
             <div id="grid-container" class="overflow-x-auto custom-scrollbar">
                 <!-- Header Días -->
-                <div id="grid-header" class="grid-layout bg-violet-50/50 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md">
+                <div id="grid-header" class="grid-layout bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md">
                     <!-- Dinámico -->
                 </div>
 
                 <!-- Cuerpo Horarios -->
-                <div id="grid-body" class="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                <div id="grid-body" class="max-h-[65vh] overflow-y-auto custom-scrollbar">
                     <!-- Dinámico -->
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-violet-100 shadow-sm text-[10px] font-bold text-violet-400 uppercase tracking-widest">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Cloud Sync Active
+        <footer class="mt-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-violet-100 shadow-sm text-[10px] font-bold text-violet-400 uppercase tracking-widest">
+                <span id="sync-indicator" class="w-2 h-2 rounded-full bg-slate-300"></span>
+                <span id="sync-text">Cargando Sistema...</span>
             </div>
-            <p class="text-[9px] font-bold text-violet-200 uppercase tracking-widest italic">Los turnos se liberan automáticamente al finalizar</p>
+            <p class="text-[10px] font-bold text-violet-300 uppercase tracking-widest italic opacity-60">Los turnos se liberan automáticamente al finalizar el bloque.</p>
         </footer>
     </div>
 
     <!-- Booking Modal -->
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-violet-950/20 backdrop-blur-md hidden">
-        <div class="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-10 border border-white transform scale-95 animate-fade">
-            <div class="w-16 h-16 bg-violet-600 rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-violet-200">
-                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl p-10 border border-white transform transition-all">
+            <div class="w-20 h-20 bg-violet-600 rounded-[2rem] flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-violet-200">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <h3 class="text-2xl font-black text-slate-800 italic text-center">leia<span class="text-violet-600">.</span> reserva</h3>
-            <p id="modal-info" class="text-[9px] font-bold text-violet-300 uppercase tracking-widest text-center mt-2 mb-8"></p>
+            <h3 class="text-3xl font-black text-slate-800 italic text-center leading-none">Leia<span class="text-violet-600">.</span> booking</h3>
+            <p id="modal-info" class="text-[10px] font-bold text-violet-300 uppercase tracking-widest text-center mt-3 mb-10"></p>
             
-            <input type="text" id="name-input" placeholder="Nombre completo" class="w-full bg-violet-50 border-none ring-2 ring-violet-100 focus:ring-4 focus:ring-violet-600/10 focus:bg-white rounded-2xl p-4 text-center font-bold text-slate-700 transition-all outline-none mb-6">
+            <input type="text" id="name-input" placeholder="Tu nombre" class="w-full bg-violet-50/50 border-none ring-2 ring-violet-100 focus:ring-4 focus:ring-violet-600/10 focus:bg-white rounded-2xl p-5 text-center font-bold text-slate-700 transition-all outline-none mb-8 text-lg">
             
-            <div class="flex flex-col gap-2">
-                <button id="save-btn" class="w-full py-4 rounded-2xl bg-violet-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-violet-100 active:scale-95 transition-all">Confirmar Turno</button>
-                <button onclick="closeModal()" class="w-full py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-violet-500 transition-colors">Cerrar</button>
+            <div class="flex flex-col gap-3">
+                <button id="save-btn" class="w-full py-5 rounded-2xl bg-violet-600 text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-violet-100 active:scale-95 transition-all">Confirmar Registro</button>
+                <button onclick="closeModal()" class="w-full py-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-violet-500 transition-colors">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // Firebase Config
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'leia-aesthetic-pro';
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+        // Configuración Fallback (Para que no explote si no hay config)
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } catch (e) {
+            console.warn("Usando configuración local de prueba");
+            firebaseConfig = { apiKey: "demo", projectId: "demo" };
+        }
 
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'leia-aesthetic-v1';
         const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-        const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Empezar por Lunes
+        const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
         
-        let currentView = 'day'; // 'day' | 'week'
+        let currentView = 'day'; 
         let selectedDay = new Date().getDay();
         let activeKey = null;
 
-        async function init() {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-
+        // INICIALIZACIÓN INMEDIATA DE UI
+        function startUI() {
             renderDaySelector();
             renderGrid();
             updateClock();
             setInterval(updateClock, 1000);
-            listenToData();
+        }
+
+        // CONEXIÓN A DATOS
+        async function connectCloud() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+                
+                await signInAnonymously(auth);
+                
+                document.getElementById('sync-indicator').classList.replace('bg-slate-300', 'bg-emerald-400');
+                document.getElementById('sync-indicator').classList.add('animate-pulse');
+                document.getElementById('sync-text').innerText = 'Sincronización en la Nube Activa';
+
+                listenToData(db);
+                window.dbInstance = db;
+            } catch (err) {
+                console.error("Cloud error:", err);
+                document.getElementById('sync-text').innerText = 'Modo Local (Sin conexión)';
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+            
+            // Auto-refresh de headers cada minuto para el color del día actual
+            if(now.getSeconds() === 0) renderDaySelector();
         }
 
         function renderDaySelector() {
             const nav = document.getElementById('day-selector');
+            if(!nav) return;
             nav.innerHTML = '';
+            const today = new Date().getDay();
+
             DAY_ORDER.forEach(d => {
                 const btn = document.createElement('button');
-                btn.className = `px-5 py-2.5 rounded-2xl text-[11px] font-bold transition-all whitespace-nowrap shadow-sm border border-violet-50 ${selectedDay === d ? 'active-tab bg-violet-600 text-white' : 'bg-white text-violet-400'}`;
-                btn.innerText = DAYS[d];
+                const isSelected = selectedDay === d;
+                const isToday = today === d;
+
+                btn.className = `px-6 py-3 rounded-2xl text-[11px] font-bold transition-all whitespace-nowrap shadow-sm border ${
+                    isSelected ? 'active-tab bg-violet-600 text-white border-violet-600' : 'bg-white text-violet-400 border-violet-50'
+                }`;
+                
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        ${isToday ? '<div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>' : ''}
+                        ${DAYS[d]}
+                    </div>
+                `;
+
                 btn.onclick = () => {
                     selectedDay = d;
                     if(currentView === 'day') renderGrid();
@@ -181,15 +221,13 @@
                 };
                 nav.appendChild(btn);
             });
-            // Ocultar selector si es vista semana
             nav.style.opacity = currentView === 'day' ? '1' : '0';
-            nav.style.pointerEvents = currentView === 'day' ? 'auto' : 'none';
         }
 
         window.setView = (view) => {
             currentView = view;
-            document.getElementById('btn-day-view').className = `px-6 py-2 rounded-xl text-xs font-bold transition-all ${view === 'day' ? 'active-tab' : 'text-violet-400'}`;
-            document.getElementById('btn-week-view').className = `px-6 py-2 rounded-xl text-xs font-bold transition-all ${view === 'week' ? 'active-tab' : 'text-violet-400'}`;
+            document.getElementById('btn-day-view').className = `px-8 py-2.5 rounded-xl text-xs font-bold transition-all ${view === 'day' ? 'active-tab' : 'text-violet-400'}`;
+            document.getElementById('btn-week-view').className = `px-8 py-2.5 rounded-xl text-xs font-bold transition-all ${view === 'week' ? 'active-tab' : 'text-violet-400'}`;
             renderDaySelector();
             renderGrid();
         }
@@ -197,34 +235,37 @@
         function renderGrid() {
             const header = document.getElementById('grid-header');
             const body = document.getElementById('grid-body');
-            header.className = currentView === 'week' ? 'week-grid bg-violet-50/50 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md' : 'day-grid bg-violet-50/50 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md';
+            const today = new Date().getDay();
+
+            header.className = currentView === 'week' ? 'week-grid bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md' : 'day-grid bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md';
             
-            // Header
-            header.innerHTML = `<div class="p-4 border-r border-violet-100"></div>`;
+            header.innerHTML = `<div class="p-5 border-r border-violet-100 flex items-center justify-center text-violet-200">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>`;
+
             if (currentView === 'week') {
                 DAY_ORDER.forEach(d => {
                     const h = document.createElement('div');
-                    h.className = `p-4 text-center border-r last:border-r-0 border-violet-100 font-bold text-[10px] uppercase tracking-widest ${new Date().getDay() === d ? 'text-violet-600 bg-violet-100/50' : 'text-violet-300'}`;
+                    h.className = `p-5 text-center border-r last:border-r-0 border-violet-100 font-bold text-[10px] uppercase tracking-widest ${today === d ? 'text-violet-600 bg-violet-100/30' : 'text-violet-300'}`;
                     h.innerText = DAYS[d];
                     header.appendChild(h);
                 });
             } else {
                 const h = document.createElement('div');
-                h.className = `p-4 text-center font-bold text-[10px] uppercase tracking-widest text-violet-600`;
+                h.className = `p-5 text-center font-bold text-[10px] uppercase tracking-widest text-violet-600`;
                 h.innerText = DAYS[selectedDay];
                 header.appendChild(h);
             }
 
-            // Body
             body.innerHTML = '';
             for (let h = 8; h < 21; h++) {
                 ['00', '30'].forEach(m => {
                     const time = `${h.toString().padStart(2, '0')}:${m}`;
                     const row = document.createElement('div');
-                    row.className = currentView === 'week' ? 'week-grid border-b border-violet-50 group hover:bg-violet-50/20 transition-colors' : 'day-grid border-b border-violet-50 group hover:bg-violet-50/20 transition-colors';
+                    row.className = currentView === 'week' ? 'week-grid border-b border-violet-50 group transition-colors' : 'day-grid border-b border-violet-50 group transition-colors';
                     
                     const timeLabel = document.createElement('div');
-                    timeLabel.className = 'p-4 border-r border-violet-100 flex items-center justify-center text-[10px] font-mono font-black text-violet-200';
+                    timeLabel.className = 'p-4 border-r border-violet-100 flex items-center justify-center text-[11px] font-mono font-black text-violet-200 bg-slate-50/30 group-hover:text-violet-500 transition-colors';
                     timeLabel.innerText = time;
                     row.appendChild(timeLabel);
 
@@ -236,7 +277,7 @@
                         
                         const inner = document.createElement('div');
                         inner.id = `slot-${d}-${time}`;
-                        inner.className = 'slot-inner w-full min-h-[42px] rounded-2xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase tracking-tighter border border-dashed border-violet-100 text-violet-200 transition-all hover:border-violet-300 hover:text-violet-400';
+                        inner.className = 'slot-inner w-full min-h-[48px] rounded-2xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase tracking-tighter border border-dashed border-violet-100 text-violet-200 transition-all hover:border-violet-300 hover:text-violet-500 hover:bg-white';
                         inner.innerText = '+ Libre';
                         
                         cell.appendChild(inner);
@@ -245,11 +286,9 @@
                     body.appendChild(row);
                 });
             }
-            // Trigger a refresh of existing data
-            listenToData();
         }
 
-        function listenToData() {
+        function listenToData(db) {
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'reservations');
             onSnapshot(colRef, (snap) => {
                 const now = new Date();
@@ -264,9 +303,6 @@
                     const [h, m] = tStr.split(':').map(Number);
                     const slotEnd = h * 60 + m + 30;
 
-                    // Limpieza: si el día ya pasó o si es hoy y terminó el bloque
-                    const isOldDay = (todayIdx === 0 && d !== 0) ? false : (d < todayIdx && d !== 0) || (todayIdx !== 0 && d === 0);
-                    // Simplificado: si el día es menor al actual (considerando Lunes como 1 y Domingo como 7)
                     const dFixed = d === 0 ? 7 : d;
                     const tFixed = todayIdx === 0 ? 7 : todayIdx;
 
@@ -275,8 +311,8 @@
                     } else {
                         const el = document.getElementById(`slot-${id}`);
                         if (el) {
-                            el.className = 'slot-inner w-full min-h-[42px] rounded-2xl flex flex-col items-center justify-center p-2 text-center text-[10px] font-bold slot-reserved transition-all animate-in zoom-in-95';
-                            el.innerHTML = `<span class="truncate w-full">${name}</span><div class="w-1.5 h-1.5 rounded-full bg-white/40 mt-1 animate-pulse"></div>`;
+                            el.className = 'slot-inner w-full min-h-[48px] rounded-2xl flex flex-col items-center justify-center p-2 text-center text-[11px] font-bold slot-reserved transition-all animate-in zoom-in-95';
+                            el.innerHTML = `<span class="truncate w-full px-1">${name}</span><div class="w-1.5 h-1.5 rounded-full bg-white/40 mt-1 animate-pulse"></div>`;
                         }
                     }
                 });
@@ -287,7 +323,7 @@
             activeKey = `${d}-${t}`;
             document.getElementById('modal-info').innerText = `${DAYS[d]} • ${t}`;
             document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('name-input').focus();
+            setTimeout(() => document.getElementById('name-input').focus(), 100);
         };
 
         window.closeModal = () => {
@@ -297,17 +333,24 @@
 
         document.getElementById('save-btn').onclick = async () => {
             const name = document.getElementById('name-input').value.trim();
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'reservations', activeKey);
-            if (name === "") await deleteDoc(docRef);
-            else await setDoc(docRef, { name, ts: Date.now() });
-            closeModal();
+            if(!window.dbInstance) {
+                alert("Esperando conexión a la nube...");
+                return;
+            }
+            const docRef = doc(window.dbInstance, 'artifacts', appId, 'public', 'data', 'reservations', activeKey);
+            try {
+                if (name === "") await deleteDoc(docRef);
+                else await setDoc(docRef, { name, ts: Date.now() });
+                closeModal();
+            } catch (e) {
+                console.error(e);
+            }
         };
 
-        function updateClock() {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }
+        // EJECUCIÓN
+        startUI();
+        connectCloud();
 
-        init();
     </script>
 </body>
 </html>
