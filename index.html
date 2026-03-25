@@ -7,144 +7,79 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at top right, #f5f3ff, #ffffff);
-            color: #1e293b;
-        }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        .active-tab {
-            background: #7c3aed !important;
-            color: white !important;
-            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-        }
-
-        .week-grid {
-            display: grid;
-            grid-template-columns: 100px repeat(7, minmax(150px, 1fr));
-        }
-
-        .day-grid {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-        }
-
-        .slot-reserved {
-            background: #7c3aed;
-            color: white;
-            border: none !important;
-            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #ddd6fe;
-            border-radius: 10px;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at top right, #f5f3ff, #ffffff); color: #1e293b; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .active-tab { background: #7c3aed !important; color: white !important; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3); }
+        .grid-layout { display: grid; grid-template-columns: 100px 1fr; }
+        .week-grid { display: grid; grid-template-columns: 100px repeat(7, minmax(150px, 1fr)); }
+        .day-grid { display: grid; grid-template-columns: 100px 1fr; }
+        .slot-reserved { background: #7c3aed; color: white; border: none !important; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd6fe; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="p-4 lg:p-10 min-h-screen">
     <div class="max-w-7xl mx-auto">
-        <!-- Header -->
+        <!-- Encabezado -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
             <div class="text-center md:text-left">
-                <h1 class="text-6xl lg:text-8xl font-[900] tracking-tighter text-violet-600 italic leading-none">
-                    Leia<span class="text-violet-200">.</span>
-                </h1>
+                <h1 class="text-6xl lg:text-8xl font-[900] tracking-tighter text-violet-600 italic leading-none">Leia<span class="text-violet-200">.</span></h1>
                 <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-violet-400 mt-3">Instrumentación Óptica de Precisión</p>
             </div>
-
-            <div class="flex flex-col items-center md:items-end gap-3">
-                <div class="bg-white/80 p-4 px-8 rounded-[2.5rem] shadow-sm border border-violet-100 flex items-center gap-6">
-                    <div class="text-right">
-                        <div class="text-[9px] font-black text-violet-300 uppercase tracking-widest">Hora Local Actual</div>
-                        <div id="clock" class="text-3xl font-mono font-bold text-violet-600 leading-none mt-1">--:--:--</div>
-                    </div>
-                    <div class="w-14 h-14 rounded-2xl bg-violet-600 flex items-center justify-center text-white shadow-xl shadow-violet-200">
-                        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
+            <div class="bg-white/80 p-4 px-8 rounded-[2.5rem] shadow-sm border border-violet-100 flex items-center gap-6">
+                <div class="text-right">
+                    <div class="text-[9px] font-black text-violet-300 uppercase tracking-widest">Hora Local</div>
+                    <div id="clock" class="text-3xl font-mono font-bold text-violet-600 mt-1">--:--:--</div>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-violet-600 flex items-center justify-center text-white shadow-xl">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
             </div>
         </header>
 
-        <!-- Seleccion de Vista y Selector de Día -->
+        <!-- Selectores de Vista y Día -->
         <div class="flex flex-col lg:flex-row gap-6 mb-10 items-center justify-between">
             <div class="flex p-1.5 bg-violet-100/40 rounded-2xl w-fit border border-violet-100/50">
                 <button id="btn-day-view" onclick="setView('day')" class="px-8 py-3 rounded-xl text-xs font-bold transition-all active-tab">Vista Día</button>
                 <button id="btn-week-view" onclick="setView('week')" class="px-8 py-3 rounded-xl text-xs font-bold transition-all text-violet-400">Vista Semana</button>
             </div>
-
-            <nav id="day-selector" class="flex gap-2 overflow-x-auto no-scrollbar max-w-full pb-2 lg:pb-0 transition-opacity duration-300">
-                <!-- Generado dinámicamente -->
-            </nav>
+            <nav id="day-selector" class="flex gap-2 overflow-x-auto no-scrollbar max-w-full pb-2 transition-opacity duration-300"></nav>
         </div>
 
-        <!-- Contenedor Principal de Horarios -->
+        <!-- Tabla de Horarios -->
         <div class="bg-white/90 rounded-[3rem] shadow-2xl border border-violet-50 overflow-hidden flex flex-col glass animate-fade">
             <div id="grid-container" class="overflow-x-auto custom-scrollbar">
-                <div id="grid-header" class="grid-layout bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md">
-                    <!-- Dinámico -->
-                </div>
-                <div id="grid-body" class="max-h-[65vh] overflow-y-auto custom-scrollbar">
-                    <!-- Dinámico -->
-                </div>
+                <div id="grid-header" class="grid-layout bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md"></div>
+                <div id="grid-body" class="max-h-[65vh] overflow-y-auto custom-scrollbar"></div>
             </div>
         </div>
 
-        <!-- Pie de página -->
+        <!-- Pie de página con estado de sincronización -->
         <footer class="mt-12 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-violet-100 shadow-sm text-[10px] font-bold text-violet-400 uppercase tracking-widest">
                 <span id="sync-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
-                <span id="sync-text">Inicializando Nube...</span>
+                <span id="sync-text">Conectando...</span>
             </div>
-            <p class="text-[10px] font-bold text-violet-300 uppercase tracking-widest italic opacity-70">Los turnos se liberan automáticamente al finalizar el bloque de tiempo.</p>
+            <p class="text-[10px] font-bold text-violet-300 uppercase tracking-widest italic opacity-70">Turnos de 1 hora. Cierre automático al finalizar la sesión.</p>
         </footer>
     </div>
 
-    <!-- Modal de Reserva -->
+    <!-- Modal de Reserva (Escritura) -->
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-violet-950/30 backdrop-blur-md hidden">
         <div class="bg-white w-full max-w-sm rounded-[3.5rem] shadow-2xl p-12 border border-white transform transition-all animate-fade">
-            <div class="w-24 h-24 bg-violet-600 rounded-[2.5rem] flex items-center justify-center text-white mx-auto mb-8 shadow-2xl shadow-violet-200">
-                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <h3 class="text-3xl font-black text-slate-800 italic text-center leading-none">Leia<span class="text-violet-600">.</span> booking</h3>
-            <p id="modal-info" class="text-[10px] font-bold text-violet-300 uppercase tracking-widest text-center mt-4 mb-10"></p>
+            <h3 class="text-3xl font-black text-slate-800 italic text-center">Leia<span class="text-violet-600">.</span> booking</h3>
+            <p id="modal-info" class="text-[10px] font-bold text-violet-300 uppercase tracking-widest text-center mt-4 mb-8"></p>
+            
+            <div id="modal-error" class="hidden bg-red-50 text-red-500 text-[10px] font-bold p-3 rounded-xl mb-4 text-center border border-red-100"></div>
 
-            <div class="space-y-6">
-                <input type="text" id="name-input" placeholder="Tu nombre" 
-                    class="w-full bg-violet-50/50 border-none ring-2 ring-violet-100 focus:ring-4 focus:ring-violet-600/10 focus:bg-white rounded-2xl p-6 text-center font-bold text-slate-700 transition-all outline-none text-lg"
-                    maxlength="20">
-
-                <div class="flex flex-col gap-3">
-                    <button id="save-btn" class="w-full py-5 rounded-2xl bg-violet-600 text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-violet-200 hover:bg-violet-700 active:scale-95 transition-all">Confirmar Registro</button>
-                    <button onclick="closeModal()" class="w-full py-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-violet-500 transition-colors">Cancelar</button>
-                </div>
+            <input type="text" id="name-input" placeholder="Tu nombre" class="w-full bg-violet-50/50 border-none ring-2 ring-violet-100 focus:ring-4 focus:ring-violet-600/10 focus:bg-white rounded-2xl p-6 text-center font-bold text-slate-700 outline-none text-lg" maxlength="20">
+            
+            <div class="flex flex-col gap-3 mt-6">
+                <button id="save-btn" class="w-full py-5 rounded-2xl bg-violet-600 text-white font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-all disabled:opacity-50">Confirmar Registro</button>
+                <button id="close-btn" onclick="closeModal()" class="w-full py-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-violet-500">Cancelar</button>
             </div>
         </div>
     </div>
@@ -154,10 +89,7 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // ==========================================
-        // CONFIGURACIÓN DE FIREBASE (TU NUBE)
-        // Datos extraídos de tus capturas de pantalla
-        // ==========================================
+        // Configuración de tu proyecto "Lupa"
         const firebaseConfig = {
             apiKey: "AIzaSyDipSTDGZjZ5iw8W5SMuxn3h1-0eckLW7A",
             authDomain: "lupa-6bee5.firebaseapp.com",
@@ -167,254 +99,150 @@
             appId: "1:127097482963:web:6022b0b823aa3092386e26"
         };
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'leia-aesthetic-v1';
+        const appId = 'leia-v1-prod';
         const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
         const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+        let currentView = 'day', selectedDay = new Date().getDay(), activeKey = null, db = null, isReady = false;
 
-        let currentView = 'day';
-        let selectedDay = new Date().getDay();
-        let activeKey = null;
-        let db = null;
-        let auth = null;
-        let unsubscribe = null;
-        let isAuthReady = false;
-
-        // --- Inicialización de UI ---
-        function initUI() {
-            updateClock();
-            setInterval(updateClock, 1000);
-            renderDaySelector();
-            renderGrid();
-        }
-
-        // --- Conexión y Autenticación Robusta ---
-        async function connectCloud() {
-            const indicator = document.getElementById('sync-indicator');
-            const statusText = document.getElementById('sync-text');
-
+        async function initCloud() {
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
-                auth = getAuth(app);
-                
-                // 1. Intentar autenticación anónima
-                const userCredential = await signInAnonymously(auth);
-                console.log("Autenticado como:", userCredential.user.uid);
-                isAuthReady = true;
-                
-                indicator.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
-                statusText.innerText = 'Nube Conectada';
-
-                // 2. Iniciar escucha de datos una vez autenticado
-                listenToData();
-            } catch (err) {
-                console.error("Fallo de conexión Firebase:", err);
-                indicator.className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-                
-                if (err.code === 'auth/operation-not-allowed') {
-                    statusText.innerText = 'Error: Activa "Anónimo" en Firebase Auth';
-                } else if (err.code === 'permission-denied') {
-                    statusText.innerText = 'Error: Revisa Reglas de Firestore';
-                } else {
-                    statusText.innerText = 'Error de Conexión';
-                }
+                await signInAnonymously(getAuth(app));
+                isReady = true;
+                document.getElementById('sync-indicator').className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+                document.getElementById('sync-text').innerText = 'Sincronización Activa';
+                listenData();
+            } catch (e) {
+                document.getElementById('sync-text').innerText = 'Fallo de conexión';
             }
-        }
-
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('es-ES', { hour12: false });
-            if (now.getSeconds() === 0) renderDaySelector();
         }
 
         function renderDaySelector() {
             const nav = document.getElementById('day-selector');
-            if (!nav) return;
-            nav.innerHTML = '';
+            if (!nav) return; nav.innerHTML = '';
             const today = new Date().getDay();
-
             DAY_ORDER.forEach(d => {
                 const btn = document.createElement('button');
-                const isSelected = selectedDay === d;
-                const isToday = today === d;
-
-                btn.className = `px-6 py-3 rounded-2xl text-[11px] font-bold transition-all whitespace-nowrap shadow-sm border ${
-                    isSelected ? 'active-tab border-violet-600' : 'bg-white text-violet-400 border-violet-50 hover:border-violet-200'
-                }`;
-                
-                btn.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        ${isToday ? '<div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>' : ''}
-                        ${DAYS[d]}
-                    </div>
-                `;
-
-                btn.onclick = () => {
-                    selectedDay = d;
-                    if (currentView === 'day') renderGrid();
-                    renderDaySelector();
-                };
+                btn.className = `px-6 py-3 rounded-2xl text-[11px] font-bold border transition-all ${selectedDay === d ? 'active-tab border-violet-600' : 'bg-white text-violet-400 border-violet-50'}`;
+                btn.innerHTML = `<div class="flex items-center gap-2">${today === d ? '<div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>' : ''}${DAYS[d]}</div>`;
+                btn.onclick = () => { selectedDay = d; if (currentView === 'day') renderGrid(); renderDaySelector(); };
                 nav.appendChild(btn);
             });
-
             nav.style.opacity = currentView === 'day' ? '1' : '0';
-            nav.style.pointerEvents = currentView === 'day' ? 'auto' : 'none';
         }
 
-        window.setView = (view) => {
-            currentView = view;
-            document.getElementById('btn-day-view').className = `px-8 py-3 rounded-xl text-xs font-bold transition-all ${view === 'day' ? 'active-tab' : 'text-violet-400'}`;
-            document.getElementById('btn-week-view').className = `px-8 py-3 rounded-xl text-xs font-bold transition-all ${view === 'week' ? 'active-tab' : 'text-violet-400'}`;
-            renderDaySelector();
-            renderGrid();
+        window.setView = (v) => {
+            currentView = v;
+            document.getElementById('btn-day-view').className = `px-8 py-3 rounded-xl text-xs font-bold transition-all ${v==='day'?'active-tab':'text-violet-400'}`;
+            document.getElementById('btn-week-view').className = `px-8 py-3 rounded-xl text-xs font-bold transition-all ${v==='week'?'active-tab':'text-violet-400'}`;
+            renderDaySelector(); renderGrid();
         }
 
         function renderGrid() {
-            const header = document.getElementById('grid-header');
-            const body = document.getElementById('grid-body');
-            const today = new Date().getDay();
-
+            const header = document.getElementById('grid-header'), body = document.getElementById('grid-body');
             header.className = currentView === 'week' ? 'week-grid bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md' : 'day-grid bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md';
-
-            header.innerHTML = `<div class="p-5 border-r border-violet-100 flex items-center justify-center text-violet-200">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>`;
-
-            if (currentView === 'week') {
-                DAY_ORDER.forEach(d => {
-                    const h = document.createElement('div');
-                    h.className = `p-5 text-center border-r last:border-r-0 border-violet-100 font-bold text-[10px] uppercase tracking-widest ${today === d ? 'text-violet-600 bg-violet-600/5' : 'text-violet-300'}`;
-                    h.innerText = DAYS[d];
-                    header.appendChild(h);
-                });
-            } else {
+            header.innerHTML = '<div class="p-5 border-r border-violet-100"></div>';
+            (currentView === 'week' ? DAY_ORDER : [selectedDay]).forEach(d => {
                 const h = document.createElement('div');
-                h.className = `p-5 text-center font-bold text-[10px] uppercase tracking-widest text-violet-600`;
-                h.innerText = DAYS[selectedDay];
-                header.appendChild(h);
-            }
-
+                h.className = 'p-5 text-center border-r last:border-r-0 border-violet-100 font-bold text-[10px] uppercase text-violet-600';
+                h.innerText = DAYS[d]; header.appendChild(h);
+            });
             body.innerHTML = '';
             for (let h = 8; h <= 20; h++) {
-                ['00', '30'].forEach(m => {
-                    const time = `${h.toString().padStart(2, '0')}:${m}`;
-                    const row = document.createElement('div');
-                    row.className = currentView === 'week' ? 'week-grid border-b border-violet-50 group transition-colors' : 'day-grid border-b border-violet-50 group transition-colors';
-
-                    const timeLabel = document.createElement('div');
-                    timeLabel.className = 'p-4 border-r border-violet-100 flex items-center justify-center text-[11px] font-mono font-black text-violet-200 bg-slate-50/30 group-hover:text-violet-500 transition-colors';
-                    timeLabel.innerText = time;
-                    row.appendChild(timeLabel);
-
-                    const daysToRender = currentView === 'week' ? DAY_ORDER : [selectedDay];
-                    daysToRender.forEach(d => {
-                        const cell = document.createElement('div');
-                        cell.className = 'p-2 border-r last:border-r-0 border-violet-50/50';
-                        
-                        const inner = document.createElement('div');
-                        inner.id = `slot-${d}-${time}`;
-                        inner.className = 'slot-inner w-full min-h-[50px] rounded-2xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase tracking-tighter border border-dashed border-violet-100 text-violet-200 transition-all cursor-pointer hover:border-violet-300 hover:text-violet-500 hover:bg-white';
-                        inner.innerText = '+ Libre';
-                        inner.onclick = () => openBooking(d, time);
-
-                        cell.appendChild(inner);
-                        row.appendChild(cell);
-                    });
-                    body.appendChild(row);
+                const time = `${h.toString().padStart(2, '0')}:00`, row = document.createElement('div');
+                row.className = currentView === 'week' ? 'week-grid border-b border-violet-50 group' : 'day-grid border-b border-violet-50 group';
+                const tl = document.createElement('div');
+                tl.className = 'p-4 border-r border-violet-100 flex items-center justify-center text-[12px] font-mono font-black text-violet-200 bg-slate-50/20';
+                tl.innerText = time; row.appendChild(tl);
+                (currentView === 'week' ? DAY_ORDER : [selectedDay]).forEach(d => {
+                    const cell = document.createElement('div'), inner = document.createElement('div');
+                    cell.className = 'p-2 border-r last:border-r-0 border-violet-50/50';
+                    inner.id = `slot-${d}-${time}`;
+                    inner.className = 'slot-inner w-full min-h-[75px] rounded-3xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase border border-dashed border-violet-100 text-violet-200 cursor-pointer hover:bg-white transition-all';
+                    inner.innerText = '+ Disponible'; inner.onclick = () => openBooking(d, time);
+                    cell.appendChild(inner); row.appendChild(cell);
                 });
+                body.appendChild(row);
             }
-            if (isAuthReady) listenToData();
+            if (isReady) listenData();
         }
 
-        // --- Escucha de Firestore con manejo de errores de permisos ---
-        function listenToData() {
-            if (!db || !isAuthReady) return;
-            if (unsubscribe) unsubscribe();
-
-            const colPath = `/artifacts/${appId}/public/data/reservations`;
-            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'reservations');
-            
-            unsubscribe = onSnapshot(colRef, (snap) => {
-                const now = new Date();
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                const todayIdx = now.getDay();
-
-                // Limpiar slots ocupados antes de repintar
+        function listenData() {
+            if (!db || !isReady) return;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'reservations'), (snap) => {
+                const now = new Date(), currentMin = now.getHours() * 60 + now.getMinutes(), tIdx = now.getDay();
                 document.querySelectorAll('.slot-inner.slot-reserved').forEach(el => {
-                    el.className = 'slot-inner w-full min-h-[50px] rounded-2xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase tracking-tighter border border-dashed border-violet-100 text-violet-200 transition-all cursor-pointer hover:border-violet-300 hover:text-violet-500 hover:bg-white';
-                    el.innerText = '+ Libre';
+                    el.className = 'slot-inner w-full min-h-[75px] rounded-3xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase border border-dashed border-violet-100 text-violet-200 cursor-pointer hover:bg-white transition-all';
+                    el.innerText = '+ Disponible';
                 });
-
                 snap.forEach(docSnap => {
-                    const id = docSnap.id;
-                    const { name } = docSnap.data();
-                    const [dStr, tStr] = id.split('-');
-                    const d = parseInt(dStr);
-                    const [h, m] = tStr.split(':').map(Number);
-                    const slotEnd = h * 60 + m + 30;
-
-                    const dFixed = d === 0 ? 7 : d;
-                    const tFixed = todayIdx === 0 ? 7 : todayIdx;
-
-                    if (dFixed < tFixed || (dFixed === tFixed && currentMinutes > slotEnd)) return;
-
+                    const id = docSnap.id, [d, t] = id.split('-'), [h, m] = t.split(':').map(Number);
+                    const slotEnd = h * 60 + 59;
+                    const dF = parseInt(d)===0?7:parseInt(d), tF = tIdx===0?7:tIdx;
+                    if (dF < tF || (dF === tF && currentMin > slotEnd)) return;
                     const el = document.getElementById(`slot-${id}`);
                     if (el) {
-                        el.className = 'slot-inner w-full min-h-[50px] rounded-2xl flex flex-col items-center justify-center p-2 text-center text-[11px] font-bold slot-reserved transition-all animate-in zoom-in-95 cursor-pointer';
-                        el.innerHTML = `
-                            <span class="truncate w-full px-1 uppercase tracking-tighter">${name}</span>
-                            <div class="w-1.5 h-1.5 rounded-full bg-white/40 mt-1 animate-pulse"></div>
-                        `;
+                        el.className = 'slot-inner w-full min-h-[75px] rounded-3xl flex flex-col items-center justify-center p-2 text-center text-[11px] font-bold slot-reserved cursor-pointer transition-all scale-[0.98]';
+                        el.innerHTML = `<span class="truncate w-full px-2 uppercase tracking-tight">${docSnap.data().name}</span><div class="w-2 h-2 rounded-full bg-white/30 mt-2 animate-pulse"></div>`;
                     }
                 });
-            }, (err) => {
-                console.error("Error leyendo Firestore:", err);
-                if (err.code === 'permission-denied') {
-                    document.getElementById('sync-text').innerText = 'Error: Permisos Firestore denegados';
-                    document.getElementById('sync-indicator').className = 'w-2.5 h-2.5 rounded-full bg-red-500';
-                }
             });
         }
 
-        window.openBooking = (d, t) => {
-            if (!isAuthReady) return;
-            activeKey = `${d}-${t}`;
-            document.getElementById('modal-info').innerText = `${DAYS[d]} • ${t} HS`;
+        window.openBooking = (d, t) => { 
+            activeKey = `${d}-${t}`; 
+            document.getElementById('modal-info').innerText = `${DAYS[d]} • SESIÓN ${t}`; 
+            document.getElementById('modal-error').classList.add('hidden');
             const el = document.getElementById(`slot-${activeKey}`);
-            const currentName = el && el.classList.contains('slot-reserved') ? el.querySelector('span').innerText : "";
-            document.getElementById('name-input').value = currentName;
-            document.getElementById('modal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('name-input').focus(), 150);
+            const existingName = el && el.classList.contains('slot-reserved') ? el.querySelector('span').innerText : "";
+            document.getElementById('name-input').value = existingName;
+            document.getElementById('modal').classList.remove('hidden'); 
+            setTimeout(()=>document.getElementById('name-input').focus(), 150); 
         };
 
-        window.closeModal = () => {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('name-input').value = "";
+        window.closeModal = () => { 
+            document.getElementById('modal').classList.add('hidden'); 
+            document.getElementById('name-input').value = ""; 
         };
 
         document.getElementById('save-btn').onclick = async () => {
-            if (!db || !isAuthReady) return;
-            const name = document.getElementById('name-input').value.trim();
+            const nameInput = document.getElementById('name-input');
+            const saveBtn = document.getElementById('save-btn');
+            const errorDiv = document.getElementById('modal-error');
+            const name = nameInput.value.trim();
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'reservations', activeKey);
             
-            try {
+            // Bloquear botón para evitar múltiples clics
+            saveBtn.disabled = true;
+            saveBtn.innerText = "GUARDANDO...";
+            errorDiv.classList.add('hidden');
+
+            try { 
                 if (name === "") {
-                    await deleteDoc(docRef);
+                    await deleteDoc(docRef); 
                 } else {
-                    await setDoc(docRef, { name, ts: Date.now() });
+                    await setDoc(docRef, { name, ts: Date.now() }); 
                 }
-                closeModal();
-            } catch (err) { 
-                console.error("Error guardando:", err);
-                if (err.code === 'permission-denied') {
-                    alert("¡Error de permisos! Revisa las Reglas de Seguridad en tu consola Firebase Firestore.");
-                }
+                
+                // --- PUNTO CLAVE: Cerramos la ventana al éxito ---
+                closeModal(); 
+            } catch (e) { 
+                console.error(e);
+                errorDiv.innerText = "Error al conectar con la nube. Revisa tus reglas.";
+                errorDiv.classList.remove('hidden');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "CONFIRMAR REGISTRO";
             }
         };
 
-        // Ejecutar
+        function initUI() { 
+            setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('es-ES', { hour12: false }); }, 1000);
+            renderDaySelector(); renderGrid(); initCloud();
+        }
         initUI();
-        connectCloud();
     </script>
 </body>
 </html>
+
