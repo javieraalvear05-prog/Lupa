@@ -4,40 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leia. | Gestión de Horarios</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Optimización de Conexiones (Acelera la carga de recursos externos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
+
+    <!-- Carga optimizada de fuentes con swap para evitar texto invisible -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at top right, #f5f3ff, #ffffff); color: #1e293b; min-height: 100vh; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        .active-tab { background: #7c3aed !important; color: white !important; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3); }
-        .grid-layout { display: grid; grid-template-columns: 100px 1fr; }
-        .week-grid { display: grid; grid-template-columns: 100px repeat(7, minmax(150px, 1fr)); }
-        .day-grid { display: grid; grid-template-columns: 100px 1fr; }
-        .slot-reserved { background: #7c3aed; color: white; border: none !important; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #f5f3ff, #ffffff); 
+            color: #1e293b; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            /* Suavizado de renderizado de fuentes */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .glass { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+        }
+        .active-tab { 
+            background: #7c3aed !important; 
+            color: white !important; 
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3); 
+        }
+        .grid-layout { display: grid; grid-template-columns: 80px 1fr; }
+        .week-grid { display: grid; grid-template-columns: 80px repeat(7, minmax(0, 1fr)); }
+        .day-grid { display: grid; grid-template-columns: 120px 1fr; }
+        
+        .slot-reserved { 
+            background: #7c3aed; 
+            color: white; 
+            border: none !important; 
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2); 
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd6fe; border-radius: 10px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+
+        .slot-inner {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, background-color; /* Optimización de rendimiento de GPU */
+        }
+        .slot-inner:hover:not(.slot-reserved) {
+            border-color: #7c3aed;
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
     </style>
 </head>
-<body class="p-4 lg:p-10">
-    <div class="max-w-7xl mx-auto">
-        <!-- Encabezado -->
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-8">
-            <div class="text-center md:text-left">
-                <h1 class="text-6xl lg:text-8xl font-[900] tracking-tighter text-violet-600 italic leading-none">Leia<span class="text-violet-200">.</span></h1>
-                <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-violet-400 mt-3">Instrumentación Óptica de Precisión</p>
+<body class="p-6 lg:p-12">
+    <div class="max-w-screen-2xl mx-auto">
+        
+        <header class="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-12 gap-8">
+            <div class="text-center lg:text-left">
+                <h1 class="text-5xl lg:text-7xl font-[900] tracking-tighter text-violet-600 italic leading-none mb-1">Leia<span class="text-violet-200">.</span></h1>
+                <p class="text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.4em] text-violet-400 ml-1">Instrumentación Óptica de Precisión</p>
             </div>
             
-            <!-- Selector de Semana -->
-            <div class="flex items-center gap-4 bg-white/80 p-2 px-4 rounded-3xl border border-violet-100 shadow-sm">
+            <div class="flex items-center gap-6 bg-white/80 p-3 px-6 rounded-[2rem] border border-violet-100 shadow-sm glass">
                 <button onclick="changeWeek(-1)" class="p-2 hover:bg-violet-100 rounded-full transition-colors text-violet-600">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
-                <div class="text-center min-w-[180px]">
-                    <p id="week-label" class="text-[10px] font-black text-violet-300 uppercase tracking-widest leading-none mb-1">Cargando...</p>
-                    <p id="clock" class="text-xl font-mono font-bold text-violet-600 leading-none">--:--:--</p>
+                <div class="text-center min-w-[200px]">
+                    <p id="week-label" class="text-[10px] font-black text-violet-300 uppercase tracking-widest leading-none mb-2">Sincronizando...</p>
+                    <p id="clock" class="text-xl lg:text-2xl font-mono font-bold text-violet-600 leading-none">--:--:--</p>
                 </div>
                 <button onclick="changeWeek(1)" class="p-2 hover:bg-violet-100 rounded-full transition-colors text-violet-600">
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
@@ -45,51 +89,45 @@
             </div>
         </header>
 
-        <!-- Selectores de Vista -->
-        <div class="flex flex-col lg:flex-row gap-6 mb-8 items-center justify-between">
+        <div class="flex flex-col lg:flex-row gap-8 mb-8 items-center justify-between">
             <div class="flex p-1.5 bg-violet-100/40 rounded-2xl w-fit border border-violet-100/50">
-                <button id="btn-day-view" onclick="setView('day')" class="px-8 py-3 rounded-xl text-xs font-bold transition-all active-tab">Vista Día</button>
-                <button id="btn-week-view" onclick="setView('week')" class="px-8 py-3 rounded-xl text-xs font-bold transition-all text-violet-400">Vista Semana</button>
+                <button id="btn-day-view" onclick="setView('day')" class="px-10 py-3 rounded-xl text-xs font-bold transition-all active-tab">Vista Día</button>
+                <button id="btn-week-view" onclick="setView('week')" class="px-10 py-3 rounded-xl text-xs font-bold transition-all text-violet-400">Vista Semana</button>
             </div>
-            <nav id="day-selector" class="flex gap-2 overflow-x-auto no-scrollbar max-w-full pb-2 transition-opacity duration-300"></nav>
+            <nav id="day-selector" class="flex gap-3 overflow-x-auto no-scrollbar max-w-full pb-2 transition-opacity duration-300"></nav>
         </div>
 
-        <!-- Tabla de Horarios -->
-        <div class="bg-white/90 rounded-[3rem] shadow-2xl border border-violet-50 overflow-hidden flex flex-col glass animate-fade">
+        <div class="bg-white/90 rounded-[3.5rem] shadow-2xl border border-violet-50 overflow-hidden flex flex-col glass animate-fade">
             <div id="grid-container" class="overflow-x-auto custom-scrollbar">
                 <div id="grid-header" class="grid-layout bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md"></div>
-                <div id="grid-body" class="max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
+                <div id="grid-body" class="max-h-[65vh] overflow-y-auto custom-scrollbar"></div>
             </div>
         </div>
 
-        <!-- Pie de página -->
-        <footer class="mt-10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-violet-100 shadow-sm text-[10px] font-bold text-violet-400 uppercase tracking-widest">
-                <span id="sync-indicator" class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
-                <span id="sync-text">Conectando con la nube...</span>
+        <footer class="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+            <div class="inline-flex items-center gap-4 bg-white px-8 py-4 rounded-full border border-violet-100 shadow-sm text-[10px] font-bold text-violet-400 uppercase tracking-widest">
+                <span id="sync-indicator" class="w-3 h-3 rounded-full bg-slate-300"></span>
+                <span id="sync-text">Preparando motor...</span>
             </div>
-            <p class="text-[10px] font-bold text-violet-300 uppercase tracking-widest italic opacity-70">Sistema de calendario real. Reserva cualquier fecha futura.</p>
+            <p class="text-[10px] font-bold text-violet-300 uppercase tracking-[0.3em] italic opacity-70">Sistema Optimizado • Leia v2.1</p>
         </footer>
     </div>
 
-    <!-- Modal de Reserva -->
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-violet-950/30 backdrop-blur-md hidden">
-        <div class="bg-white w-full max-w-sm rounded-[3.5rem] shadow-2xl p-12 border border-white transform animate-fade">
-            <h3 class="text-3xl font-black text-slate-800 italic text-center leading-none">Leia<span class="text-violet-600">.</span> booking</h3>
-            <p id="modal-info" class="text-[10px] font-bold text-violet-300 uppercase tracking-widest text-center mt-4 mb-8"></p>
-            
+        <div class="bg-white w-full max-w-md rounded-[4rem] shadow-2xl p-16 border border-white transform animate-fade">
+            <h3 class="text-4xl font-black text-slate-800 italic text-center leading-none">Leia<span class="text-violet-600">.</span> booking</h3>
+            <p id="modal-info" class="text-[11px] font-bold text-violet-300 uppercase tracking-widest text-center mt-6 mb-10"></p>
             <div id="modal-error" class="hidden bg-red-50 text-red-600 text-[10px] font-bold p-4 rounded-2xl mb-6 text-center border border-red-100"></div>
-
-            <input type="text" id="name-input" placeholder="Tu nombre" class="w-full bg-violet-50/50 border-none ring-2 ring-violet-100 focus:ring-4 focus:ring-violet-600/10 focus:bg-white rounded-2xl p-6 text-center font-bold text-slate-700 outline-none text-lg" maxlength="20">
-            
-            <div class="flex flex-col gap-3 mt-6">
-                <button id="save-btn" class="w-full py-5 rounded-2xl bg-violet-600 text-white font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-all disabled:opacity-50">Confirmar Registro</button>
-                <button id="cancel-btn" class="w-full py-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-violet-500">Cancelar</button>
+            <input type="text" id="name-input" placeholder="Nombre completo" class="w-full bg-violet-50/50 border-none ring-2 ring-violet-100 focus:ring-4 focus:ring-violet-600/10 focus:bg-white rounded-3xl p-8 text-center font-bold text-slate-700 outline-none text-xl transition-all" maxlength="25">
+            <div class="flex flex-col gap-4 mt-8">
+                <button id="save-btn" class="w-full py-6 rounded-2xl bg-violet-600 text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl active:scale-95 transition-all disabled:opacity-50">Confirmar Registro</button>
+                <button id="cancel-btn" class="w-full py-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest hover:text-violet-500 transition-colors">Cerrar</button>
             </div>
         </div>
     </div>
 
     <script type="module">
+        // Importación optimizada (se ejecutan en paralelo al renderizado)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
@@ -109,7 +147,6 @@
         
         let currentView = 'day';
         let db = null, auth = null, isReady = false, unsubscribe = null;
-        
         let anchorDate = new Date();
         anchorDate.setHours(0,0,0,0);
         
@@ -123,28 +160,39 @@
         let selectedDayIndex = new Date().getDay();
         let activeKey = null;
 
-        // Inicialización de Nube
+        // Inicialización ultra-rápida de la UI antes que la red
+        function startApp() { 
+            updateWeekLabel();
+            renderDaySelector();
+            renderGrid();
+            
+            // Iniciar Firebase después del primer renderizado visual
+            setTimeout(initCloud, 0);
+
+            setInterval(() => { 
+                const clockEl = document.getElementById('clock');
+                if(clockEl) clockEl.innerText = new Date().toLocaleTimeString('es-ES', { hour12: false }); 
+            }, 1000);
+        }
+
         async function initCloud() {
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                
                 await signInAnonymously(auth);
                 isReady = true;
-                
-                document.getElementById('sync-indicator').className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
-                document.getElementById('sync-text').innerText = 'Nube Conectada';
-                
+                const ind = document.getElementById('sync-indicator');
+                const txt = document.getElementById('sync-text');
+                if(ind) ind.className = 'w-3 h-3 rounded-full bg-emerald-400 animate-pulse';
+                if(txt) txt.innerText = 'Nube Conectada';
                 renderGrid(); 
             } catch (e) {
-                console.error("Cloud Error:", e);
-                document.getElementById('sync-text').innerText = 'Error de conexión';
-                document.getElementById('sync-indicator').className = 'w-2.5 h-2.5 rounded-full bg-red-400';
+                const txt = document.getElementById('sync-text');
+                if(txt) txt.innerText = 'Modo Local';
             }
         }
 
-        // Navegación
         window.changeWeek = (dir) => {
             currentMonday.setDate(currentMonday.getDate() + (dir * 7));
             updateWeekLabel();
@@ -155,11 +203,11 @@
         function updateWeekLabel() {
             const end = new Date(currentMonday);
             end.setDate(end.getDate() + 6);
-            const options = { day: 'numeric', month: 'short' };
-            document.getElementById('week-label').innerText = `Semana: ${currentMonday.toLocaleDateString('es-ES', options)} - ${end.toLocaleDateString('es-ES', options)}`;
+            const options = { day: 'numeric', month: 'long' };
+            const label = document.getElementById('week-label');
+            if(label) label.innerText = `${currentMonday.toLocaleDateString('es-ES', options)} - ${end.toLocaleDateString('es-ES', options)}`;
         }
 
-        // Renderizado de UI
         function renderDaySelector() {
             const nav = document.getElementById('day-selector');
             if (!nav) return; nav.innerHTML = '';
@@ -170,8 +218,8 @@
                 
                 const btn = document.createElement('button');
                 const isSelected = selectedDayIndex === d;
-                btn.className = `px-5 py-3 rounded-2xl text-[10px] font-bold border transition-all ${isSelected ? 'active-tab border-violet-600' : 'bg-white text-violet-400 border-violet-50'}`;
-                btn.innerHTML = `<div class="flex flex-col items-center"><span>${DAYS[d]}</span><span class="text-[8px] opacity-60">${date.getDate()}</span></div>`;
+                btn.className = `px-7 py-4 rounded-2xl text-[10px] font-bold border transition-all ${isSelected ? 'active-tab border-violet-600' : 'bg-white text-violet-400 border-violet-50 hover:border-violet-200'}`;
+                btn.innerHTML = `<div class="flex flex-col items-center"><span>${DAYS[d]}</span><span class="text-[9px] opacity-60 mt-1">${date.getDate()}</span></div>`;
                 btn.onclick = () => { 
                     selectedDayIndex = d; 
                     if (currentView === 'day') renderGrid(); 
@@ -179,25 +227,24 @@
                 };
                 nav.appendChild(btn);
             });
-            nav.style.opacity = currentView === 'day' ? '1' : '0';
+            nav.style.opacity = currentView === 'day' ? '1' : '0.3';
+            nav.style.pointerEvents = currentView === 'day' ? 'auto' : 'none';
         }
 
         window.setView = (v) => {
             currentView = v;
-            document.getElementById('btn-day-view').className = `px-8 py-3 rounded-xl text-xs font-bold transition-all ${v==='day'?'active-tab':'text-violet-400'}`;
-            document.getElementById('btn-week-view').className = `px-8 py-3 rounded-xl text-xs font-bold transition-all ${v==='week'?'active-tab':'text-violet-400'}`;
+            document.getElementById('btn-day-view').className = `px-10 py-3 rounded-xl text-xs font-bold transition-all ${v==='day'?'active-tab':'text-violet-400'}`;
+            document.getElementById('btn-week-view').className = `px-10 py-3 rounded-xl text-xs font-bold transition-all ${v==='week'?'active-tab':'text-violet-400'}`;
             renderDaySelector(); 
             renderGrid();
         }
 
         window.openBooking = (dateStr, time, dayName) => { 
             activeKey = `${dateStr}-${time}`; 
-            document.getElementById('modal-info').innerText = `${dayName} ${dateStr.split('-').reverse().slice(0,2).join('/')} • ${time} HS`; 
+            document.getElementById('modal-info').innerText = `${dayName} ${dateStr.split('-').reverse().slice(0,2).join('/')} • ${time} HORAS`; 
             document.getElementById('modal-error').classList.add('hidden');
-            
             const el = document.getElementById(`slot-${activeKey}`);
             document.getElementById('name-input').value = el && el.classList.contains('slot-reserved') ? el.getAttribute('data-name') : "";
-            
             document.getElementById('modal').classList.remove('hidden'); 
             setTimeout(()=>document.getElementById('name-input').focus(), 150); 
         };
@@ -209,8 +256,9 @@
 
         function renderGrid() {
             const header = document.getElementById('grid-header'), body = document.getElementById('grid-body');
+            if(!header || !body) return;
             header.className = currentView === 'week' ? 'week-grid bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md' : 'day-grid bg-violet-50/40 border-b border-violet-100 sticky top-0 z-20 backdrop-blur-md';
-            header.innerHTML = '<div class="p-5 border-r border-violet-100"></div>';
+            header.innerHTML = '<div class="p-6 border-r border-violet-100"></div>';
             
             const daysToRender = currentView === 'week' ? DAY_ORDER : [selectedDayIndex];
             
@@ -220,17 +268,18 @@
                 date.setDate(date.getDate() + offset);
                 
                 const h = document.createElement('div');
-                h.className = 'p-5 text-center border-r last:border-r-0 border-violet-100 font-bold text-[10px] uppercase text-violet-600 flex flex-col';
-                h.innerHTML = `<span>${DAYS[d]}</span><span class="text-[8px] text-violet-300 font-black">${date.getDate()} ${date.toLocaleDateString('es-ES', {month: 'short'})}</span>`;
+                h.className = 'p-6 text-center border-r last:border-r-0 border-violet-100 font-bold text-[11px] uppercase text-violet-600 flex flex-col justify-center';
+                h.innerHTML = `<span>${DAYS[d]}</span><span class="text-[9px] text-violet-300 font-black mt-1">${date.getDate()} ${date.toLocaleDateString('es-ES', {month: 'short'})}</span>`;
                 header.appendChild(h);
             });
 
-            body.innerHTML = '';
+            const fragment = document.createDocumentFragment();
             for (let h = 8; h <= 20; h++) {
                 const time = `${h.toString().padStart(2, '0')}:00`, row = document.createElement('div');
                 row.className = currentView === 'week' ? 'week-grid border-b border-violet-50 group' : 'day-grid border-b border-violet-50 group';
+                
                 const tl = document.createElement('div');
-                tl.className = 'p-4 border-r border-violet-100 flex items-center justify-center text-[12px] font-mono font-black text-violet-200 bg-slate-50/20';
+                tl.className = 'p-6 border-r border-violet-100 flex items-center justify-center text-[13px] font-mono font-black text-violet-200 bg-slate-50/20 group-hover:text-violet-400 transition-colors';
                 tl.innerText = time; row.appendChild(tl);
                 
                 daysToRender.forEach(d => {
@@ -241,28 +290,27 @@
                     const slotId = `${dateStr}-${time}`;
 
                     const cell = document.createElement('div'), inner = document.createElement('div');
-                    cell.className = 'p-2 border-r last:border-r-0 border-violet-50/50';
+                    cell.className = 'p-3 border-r last:border-r-0 border-violet-50/50';
                     inner.id = `slot-${slotId}`;
-                    inner.className = 'slot-inner w-full min-h-[75px] rounded-3xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase border border-dashed border-violet-100 text-violet-200 cursor-pointer hover:bg-white transition-all';
+                    inner.className = 'slot-inner w-full min-h-[90px] rounded-[2rem] flex items-center justify-center p-4 text-center text-[10px] font-black uppercase border border-dashed border-violet-100 text-violet-200 cursor-pointer transition-all';
                     inner.innerText = '+ Disponible'; 
                     inner.onclick = () => window.openBooking(dateStr, time, DAYS[d]);
                     cell.appendChild(inner); row.appendChild(cell);
                 });
-                body.appendChild(row);
+                fragment.appendChild(row);
             }
+            body.innerHTML = '';
+            body.appendChild(fragment);
             if (isReady) listenData();
         }
 
-        // Escucha en tiempo real
         function listenData() {
             if (!db || !isReady) return;
             if (unsubscribe) unsubscribe();
-            
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'reservations');
             unsubscribe = onSnapshot(colRef, (snap) => {
-                // Reset visual
                 document.querySelectorAll('.slot-inner.slot-reserved').forEach(el => {
-                    el.className = 'slot-inner w-full min-h-[75px] rounded-3xl flex items-center justify-center p-2 text-center text-[9px] font-black uppercase border border-dashed border-violet-100 text-violet-200 cursor-pointer hover:bg-white transition-all';
+                    el.className = 'slot-inner w-full min-h-[90px] rounded-[2rem] flex items-center justify-center p-4 text-center text-[10px] font-black uppercase border border-dashed border-violet-100 text-violet-200 cursor-pointer transition-all';
                     el.innerText = '+ Disponible';
                     el.removeAttribute('data-name');
                 });
@@ -271,39 +319,27 @@
                     const el = document.getElementById(`slot-${docSnap.id}`);
                     if (el) {
                         const name = docSnap.data().name;
-                        el.className = 'slot-inner w-full min-h-[75px] rounded-3xl flex flex-col items-center justify-center p-2 text-center text-[11px] font-bold slot-reserved cursor-pointer transition-all scale-[0.98]';
+                        el.className = 'slot-inner w-full min-h-[90px] rounded-[2rem] flex flex-col items-center justify-center p-4 text-center text-[12px] font-bold slot-reserved cursor-pointer transition-all scale-[0.98]';
                         el.setAttribute('data-name', name);
-                        el.innerHTML = `<span class="truncate w-full px-2 uppercase tracking-tight">${name}</span><div class="w-2 h-2 rounded-full bg-white/30 mt-2 animate-pulse"></div>`;
+                        el.innerHTML = `<span class="truncate w-full px-2 uppercase tracking-wide">${name}</span><div class="w-2.5 h-2.5 rounded-full bg-white/40 mt-3 animate-pulse"></div>`;
                     }
                 });
-            }, (error) => {
-                console.error("Snapshot Error:", error);
             });
         }
 
-        // Guardar Turno
         document.getElementById('save-btn').onclick = async () => {
             if (!db || !isReady) return;
-            const nameInput = document.getElementById('name-input');
-            const saveBtn = document.getElementById('save-btn');
-            const errorDiv = document.getElementById('modal-error');
+            const nameInput = document.getElementById('name-input'), saveBtn = document.getElementById('save-btn'), errorDiv = document.getElementById('modal-error');
             const name = nameInput.value.trim();
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'reservations', activeKey);
-            
             saveBtn.disabled = true;
             saveBtn.innerText = "Sincronizando...";
-            errorDiv.classList.add('hidden');
-
             try { 
-                if (name === "") {
-                    await deleteDoc(docRef); 
-                } else {
-                    await setDoc(docRef, { name, ts: Date.now() }); 
-                }
+                if (name === "") { await deleteDoc(docRef); } 
+                else { await setDoc(docRef, { name, ts: Date.now() }); }
                 window.closeModal(); 
             } catch (e) { 
-                console.error("Save Error:", e);
-                errorDiv.innerText = "Error de Permisos: Ve a Firebase Console > Firestore > Rules y asegúrate de que permitan escritura.";
+                errorDiv.innerText = "Error de red. Intente nuevamente.";
                 errorDiv.classList.remove('hidden');
             } finally {
                 saveBtn.disabled = false;
@@ -313,25 +349,14 @@
 
         document.getElementById('cancel-btn').onclick = () => window.closeModal();
 
-        // Inicio
-        function startApp() { 
-            updateWeekLabel();
-            renderDaySelector();
-            renderGrid();
-            initCloud();
-            setInterval(() => { 
-                document.getElementById('clock').innerText = new Date().toLocaleTimeString('es-ES', { hour12: false }); 
-            }, 1000);
-        }
+        // Iniciar aplicación
         startApp();
-        
-        // Asignar funciones globales para onclick
+
+        // Funciones globales
         window.changeWeek = changeWeek;
         window.setView = setView;
         window.closeModal = closeModal;
         window.openBooking = openBooking;
-
     </script>
 </body>
 </html>
-
